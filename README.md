@@ -18,7 +18,10 @@ The listener:
 public class MyListener implements ChunkedFileCompletionListener {
     public void fileCompleted(String fileName, StorageLocation completedFile) {
         System.out.println("File " + fileName + " is done");
-        persistTheFileIfNeeded(completedFile.getInputStream());
+        persistTheFileIfNeeded(completedFile.inputStream());
+        // Or
+        persistTheFileIfNeeded(completedFile.readAllBytes());
+        
         // No need to delete the file or chunks, that happens automatically.
     }
 }

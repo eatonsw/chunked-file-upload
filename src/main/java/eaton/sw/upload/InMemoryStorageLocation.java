@@ -1,28 +1,43 @@
 package eaton.sw.upload;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
 
 public class InMemoryStorageLocation implements StorageLocation {
-    private byte[] data;
+    byte[] data;
+    
+    public InMemoryStorageLocation() {
+        this.data = new byte[0];
+    }
     
     public InMemoryStorageLocation(byte[] data) {
-        this.data = Arrays.copyOf(data, data.length);
+        checkNotNull(data);
+        this.data = data;
     }
-
+    
     @Override
-    public byte[] getData() throws StorageException {
-        return data;
+    public void writeBytes(byte[] bytes) throws IOException {
+        byte[] newData = Arrays.copyOf(data, data.length + bytes.length);
+        System.arraycopy(bytes, 0, newData, data.length, bytes.length);
+        data = newData;
     }
-
+    
     @Override
-    public InputStream getInputStream() throws StorageException {
+    public InputStream inputStream() throws IOException {
         return new ByteArrayInputStream(data);
     }
 
     @Override
-    public void delete() throws StorageException {
-        data = null;
+    public byte[] readAllBytes() throws IOException {
+        return data;
+    }
+
+    @Override
+    public void delete() throws IOException {
+        data = new byte[0];
     }
 }

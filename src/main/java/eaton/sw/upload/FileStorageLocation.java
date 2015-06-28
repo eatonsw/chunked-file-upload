@@ -1,41 +1,38 @@
 package eaton.sw.upload;
 
+import static java.nio.file.StandardOpenOption.APPEND;
+import static java.nio.file.StandardOpenOption.CREATE;
+import static java.nio.file.StandardOpenOption.WRITE;
+
+import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
 public class FileStorageLocation implements StorageLocation {
     private Path file;
-    
+
     public FileStorageLocation(Path file) {
         this.file = file;
     }
+
+    @Override
+    public void writeBytes(byte[] bytes) throws IOException {
+        Files.write(file, bytes, CREATE, WRITE, APPEND);
+    }
     
     @Override
-    public byte[] getData() throws StorageException {
-        try {
-            return Files.readAllBytes(file);
-        } catch (Exception e) {
-            throw new StorageException("Failed to read file " + file, e);
-        }
+    public InputStream inputStream() throws IOException {
+        return Files.newInputStream(file);
     }
 
     @Override
-    public InputStream getInputStream() throws StorageException {
-        try {
-            return Files.newInputStream(file);
-        } catch (Exception e) {
-            throw new StorageException("Failed to open file " + file, e);
-        }
+    public byte[] readAllBytes() throws IOException {
+        return Files.readAllBytes(file);
     }
 
     @Override
-    public void delete() throws StorageException {
-        try {
-            Files.deleteIfExists(file);
-        } catch (Exception e) {
-            throw new StorageException("Failed to delete the file " + file, e);
-        }
+    public void delete() throws IOException {
+        Files.deleteIfExists(file);
     }
-
 }

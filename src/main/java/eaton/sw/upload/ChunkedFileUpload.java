@@ -59,7 +59,7 @@ public class ChunkedFileUpload {
             StorageLocation completedFile = storageFactory.combineChunks(file);
             notifyListeners(file.getFileName(), completedFile);
             files.remove(file.getFileName());
-            completedFile.delete();
+            completedFile.deleteQuietly();
         }
     }
 }
